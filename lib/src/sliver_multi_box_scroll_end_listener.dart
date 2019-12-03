@@ -18,6 +18,8 @@ class SliverMultiBoxScrollEndListener extends StatefulWidget {
   // displayedLength: the size of part be displayed in viewport.
   final void Function(double itemLength, double displayedLength) onScrollEnd;
   final void Function(double itemLength, double displayedLength) onScrollInit;
+  final double topOverlapCompensation;
+  final double bottomOverlapCompensation;
 
   const SliverMultiBoxScrollEndListener({
     Key key,
@@ -25,6 +27,8 @@ class SliverMultiBoxScrollEndListener extends StatefulWidget {
     this.onScrollEnd,
     this.onScrollInit,
     this.debounce = 0,
+    this.topOverlapCompensation = 0,
+    this.bottomOverlapCompensation = 0,
   }): super(key: key);
 
   @override
@@ -51,7 +55,7 @@ class _State extends State<SliverMultiBoxScrollEndListener> with ScrollItemOffse
     Future.delayed( Duration(milliseconds: 100),() {
 
       if (widget.onScrollInit != null) {
-        calculateDisplayPercent(context);
+        calculateDisplayPercent(context, widget.topOverlapCompensation, widget.bottomOverlapCompensation);
         if (paintExtent > 0) {
           widget.onScrollInit(itemEndOffset - itemStartOffset,
               itemEndOffsetClamp - itemStartOffsetClamp);
@@ -65,7 +69,7 @@ class _State extends State<SliverMultiBoxScrollEndListener> with ScrollItemOffse
       }
 
       if (widget.onScrollEnd != null) {
-        calculateDisplayPercent(context);
+        calculateDisplayPercent(context, widget.topOverlapCompensation, widget.bottomOverlapCompensation);
         if (paintExtent > 0) {
           _onScrollEnd();
         }

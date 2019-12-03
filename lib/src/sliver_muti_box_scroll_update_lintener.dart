@@ -10,6 +10,8 @@ class SliverMultiBoxScrollUpdateListener extends StatefulWidget {
   final void Function(double displayPercent) onScrollUpdate;
   final void Function(double displayPercent) onScrollInit;
   final int debounce;
+  final double topOverlapCompensation;
+  final double bottomOverlapCompensation;
 
   const SliverMultiBoxScrollUpdateListener({
     Key key,
@@ -18,6 +20,8 @@ class SliverMultiBoxScrollUpdateListener extends StatefulWidget {
     this.onScrollInit,
     this.onScrollUpdate,
     this.debounce = 0,
+    this.topOverlapCompensation = 0,
+    this.bottomOverlapCompensation = 0,
   }):
       assert(child == null || builder == null, "不可以同时使用builder和child"),
       super(key: key);
@@ -61,7 +65,7 @@ class _State extends State<SliverMultiBoxScrollUpdateListener> with ScrollItemOf
 
   void refreshDisplayPercent() {
     double oldDisplayPercent = displayPercent;
-    calculateDisplayPercent(context);
+    calculateDisplayPercent(context, widget.topOverlapCompensation, widget.bottomOverlapCompensation);
 
     if (paintExtent == 0) {
       displayPercent = 0;
