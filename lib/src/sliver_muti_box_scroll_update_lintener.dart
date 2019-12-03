@@ -2,11 +2,25 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'scroll_view_listener.dart';
 import 'scroll_item_offset_mixin.dart';
+import '_debounce.dart';
 
 class SliverMultiBoxScrollUpdateListener extends StatefulWidget {
   final Widget Function(BuildContext context, double displayPercent) builder;
+  final Widget child;
+  final void Function(double displayPercent) onScrollUpdate;
+  final void Function(double displayPercent) onScrollInit;
+  final int debounce;
 
-  const SliverMultiBoxScrollUpdateListener({Key key, this.builder,}): super(key: key);
+  const SliverMultiBoxScrollUpdateListener({
+    Key key,
+    this.builder,
+    this.child,
+    this.onScrollInit,
+    this.onScrollUpdate,
+    this.debounce = 0,
+  }):
+      assert(child == null || builder == null, "不可以同时使用builder和child"),
+      super(key: key);
 
   @override
   _State createState() {
@@ -18,14 +32,20 @@ class _State extends State<SliverMultiBoxScrollUpdateListener> with ScrollItemOf
 
   StreamSubscription sb;
   double displayPercent;
+  void Function() _onScrollUpdate;
 
   @override
   void initState() {
     super.initState();
     displayPercent = 0;
 
+    _onScrollUpdate = debounce(() {
+      widget.onScrollUpdate(displayPercent);
+    }, widget.debounce);
+
     Future.microtask(() {
       refreshDisplayPercent();
+      widget.onScrollInit(displayPercent);
     });
 
     sb = ScrollViewListener.of(context).listen((ScrollNotification notification) {
@@ -35,6 +55,7 @@ class _State extends State<SliverMultiBoxScrollUpdateListener> with ScrollItemOf
       }
 
       refreshDisplayPercent();
+      _onScrollUpdate();
     });
   }
 
@@ -48,7 +69,7 @@ class _State extends State<SliverMultiBoxScrollUpdateListener> with ScrollItemOf
       displayPercent = (itemEndOffsetClamp - itemStartOffsetClamp)/(itemEndOffset - itemStartOffset);
     }
 
-    if (oldDisplayPercent != displayPercent) {
+    if (oldDisplayPercent != displayPercent && widget.builder != null) {
       setState(() {
 
       });
@@ -57,7 +78,7 @@ class _State extends State<SliverMultiBoxScrollUpdateListener> with ScrollItemOf
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder(context, displayPercent);
+    return widget.builder != null ? widget.builder(context, displayPercent) : widget.child;
   }
 
   @override

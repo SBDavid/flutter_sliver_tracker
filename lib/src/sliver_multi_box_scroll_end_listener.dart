@@ -38,7 +38,6 @@ class _State extends State<SliverMultiBoxScrollEndListener> with ScrollItemOffse
   StreamSubscription trackSB;
 
   void Function() _onScrollEnd;
-  void Function() _onScrollInit;
 
   @override
   void initState() {
@@ -49,17 +48,13 @@ class _State extends State<SliverMultiBoxScrollEndListener> with ScrollItemOffse
           itemEndOffsetClamp - itemStartOffsetClamp);
     }, widget.debounce);
 
-    _onScrollInit = debounce(() {
-      widget.onScrollInit(itemEndOffset - itemStartOffset,
-          itemEndOffsetClamp - itemStartOffsetClamp);
-    }, widget.debounce);
-
     Future.delayed( Duration(milliseconds: 100),() {
 
       if (widget.onScrollInit != null) {
         calculateDisplayPercent(context);
         if (paintExtent > 0) {
-          _onScrollInit();
+          widget.onScrollInit(itemEndOffset - itemStartOffset,
+              itemEndOffsetClamp - itemStartOffsetClamp);
         }
       }
     });
