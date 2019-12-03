@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'scroll_view_listener.dart';
 import 'scroll_item_offset_mixin.dart';
+import '_debounce.dart';
 
 /// Listening [ScrollEndNotification] from items in Slivers。
 /// For example: [SliverList] or [SliverGrid]
@@ -11,13 +12,20 @@ import 'scroll_item_offset_mixin.dart';
 class SliverMultiBoxScrollEndListener extends StatefulWidget {
 
   final Widget child;
+  final int debounce;
 
   // itemLength: the size of box in scroll direction.
   // displayedLength: the size of part be displayed in viewport.
   final void Function(double itemLength, double displayedLength) onScrollEnd;
   final void Function(double itemLength, double displayedLength) onScrollInit;
 
-  const SliverMultiBoxScrollEndListener({Key key, this.child, this.onScrollEnd, this.onScrollInit}): super(key: key);
+  const SliverMultiBoxScrollEndListener({
+    Key key,
+    this.child,
+    this.onScrollEnd,
+    this.onScrollInit,
+    this.debounce = 0,
+  }): super(key: key);
 
   @override
   _State createState() {
@@ -29,17 +37,29 @@ class _State extends State<SliverMultiBoxScrollEndListener> with ScrollItemOffse
 
   StreamSubscription trackSB;
 
+  void Function() _onScrollEnd;
+  void Function() _onScrollInit;
+
   @override
   void initState() {
     super.initState();
+
+    _onScrollEnd = debounce(() {
+      widget.onScrollEnd(itemEndOffset - itemStartOffset,
+          itemEndOffsetClamp - itemStartOffsetClamp);
+    }, widget.debounce);
+
+    _onScrollInit = debounce(() {
+      widget.onScrollInit(itemEndOffset - itemStartOffset,
+          itemEndOffsetClamp - itemStartOffsetClamp);
+    }, widget.debounce);
 
     Future.delayed( Duration(milliseconds: 100),() {
 
       if (widget.onScrollInit != null) {
         calculateDisplayPercent(context);
         if (paintExtent > 0) {
-          widget.onScrollInit(itemEndOffset - itemStartOffset,
-              itemEndOffsetClamp - itemStartOffsetClamp);
+          _onScrollInit();
         }
       }
     });
@@ -52,8 +72,7 @@ class _State extends State<SliverMultiBoxScrollEndListener> with ScrollItemOffse
       if (widget.onScrollEnd != null) {
         calculateDisplayPercent(context);
         if (paintExtent > 0) {
-          widget.onScrollInit(itemEndOffset - itemStartOffset,
-              itemEndOffsetClamp - itemStartOffsetClamp);
+          _onScrollEnd();
         }
       }
     });
