@@ -14,6 +14,7 @@ mixin ScrollItemOffsetMixin {
     RenderSliverMultiBoxAdaptor renderSliverMultiBoxAdaptor = context.ancestorRenderObjectOfType(TypeMatcher<RenderSliverMultiBoxAdaptor>());
     // ScrollView的起始绘制位置
     double startOffset = renderSliverMultiBoxAdaptor.constraints.scrollOffset;
+    double overlop = renderSliverMultiBoxAdaptor.constraints.overlap;
     // ScrollView的结束绘制位置
     double endOffset = startOffset + renderSliverMultiBoxAdaptor.geometry.paintExtent;
     // 主轴方向
@@ -47,8 +48,8 @@ mixin ScrollItemOffsetMixin {
 
       itemStartOffset = itemLayoutOffset;
       itemEndOffset = axis == Axis.vertical ? itemStartOffset + itemSize.height : itemStartOffset + itemSize.width;
-      itemStartOffsetClamp = itemStartOffset.clamp(startOffset, endOffset);
-      itemEndOffsetClamp = itemEndOffset.clamp(startOffset, endOffset);
+      itemStartOffsetClamp = itemStartOffset.clamp(startOffset+overlop, endOffset);
+      itemEndOffsetClamp = itemEndOffset.clamp(startOffset+overlop, endOffset);
 
       return false;
     });
