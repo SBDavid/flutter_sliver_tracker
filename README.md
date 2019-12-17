@@ -2,6 +2,8 @@
 
 滑动曝光埋点框架，支持SliverList、SliverGrid
 
+![demo](./demo.gif)
+
 ## 1. 安装
 
 ```yaml
