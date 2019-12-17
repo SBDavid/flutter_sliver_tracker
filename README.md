@@ -2,7 +2,7 @@
 
 滑动曝光埋点框架，支持SliverList、SliverGrid
 
-![demo](./demo.gif 960*540)
+<img src="./demo.gif" width="540" height="960" alt="图片名称">
 
 ## 1. 安装
 
