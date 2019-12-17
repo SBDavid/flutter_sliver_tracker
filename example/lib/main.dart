@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xm_sliver_listener/xm_sliver_listener.dart';
+import 'package:flutter_sliver_tracker/flutter_sliver_tracker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 void main() => runApp(MyApp());
@@ -40,18 +40,17 @@ class _MyHomePageState extends State<MyHomePage> {
           slivers: <Widget>[
             SliverAppBar(
               title: Text("Listen Scroll End in SliverToBoxAdapter"),
-              pinned: true,
             ),
 
             SliverToBoxAdapter(
               child: SliverEndScrollListener(
                 onScrollInit: (SliverConstraints constraints, SliverGeometry geometry) {
-                  //Fluttertoast.showToast(msg: "显示高度：${geometry.paintExtent}");
+                  // Fluttertoast.showToast(msg: "展示比例：${geometry.paintExtent / geometry.scrollExtent}");
                 },
                 onScrollEnd: (ScrollEndNotification notification,
                     SliverConstraints constraints,
                     SliverGeometry geometry) {
-                  // Fluttertoast.showToast(msg: "显示高度：${geometry.paintExtent}");
+                  // Fluttertoast.showToast(msg: "展示比例：${geometry.paintExtent / geometry.scrollExtent}");
                 },
                 child: Container(
                   height: 300,
@@ -65,12 +64,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
             SliverAppBar(
               title: Text("Listen Scroll End in SliverList"),
-              pinned: true,
             ),
             SliverList(
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
                   return SliverMultiBoxScrollEndListener(
+                    debounce: 1000,
                     child: Container(
                       height: 300,
                       color: Colors.redAccent,
@@ -79,10 +78,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     onScrollInit: (double itemLength, double displayedLength) {
-                      // Fluttertoast.showToast(msg: "显示高度：${displayedLength}");
+                      //Fluttertoast.showToast(msg: "显示高度：${displayedLength}");
                     },
                     onScrollEnd: (double itemLength, double displayedLength) {
-                      // Fluttertoast.showToast(msg: "显示高度：${displayedLength}");
+                      //Fluttertoast.showToast(msg: "显示高度：${displayedLength}");
                     },
                   );
                 },
@@ -91,7 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             SliverAppBar(
               title: Text("Listen Scroll End in SliverGrid"),
-              pinned: true,
             ),
             SliverGrid(
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -127,6 +125,13 @@ class _MyHomePageState extends State<MyHomePage> {
               delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
                     return SliverMultiBoxScrollUpdateListener(
+                      onScrollInit: (double percent) {
+                        // percent 列表项显示比例
+                      },
+                      onScrollUpdate: (double percent) {
+                        // percent 列表项显示比例
+                      },
+                      debounce: 1000,
                       builder: (BuildContext context, double percent) {
                         return Container(
                           height: 200,
@@ -138,12 +143,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                     );
                   },
-                  childCount: 3
+                  childCount: 6
               ),
             ),
             SliverAppBar(
               title: Text("End"),
-              pinned: true,
             ),
           ],
         ),

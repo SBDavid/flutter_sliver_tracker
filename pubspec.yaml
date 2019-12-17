@@ -1,6 +1,6 @@
-name: xm_sliver_listener
-description: A new Flutter package project.
-version: 0.0.1
+name: flutter_sliver_tracker
+description: 滑动曝光埋点框架，支持SliverList、SliverGrid
+version: 1.0.0
 author:
 homepage:
 

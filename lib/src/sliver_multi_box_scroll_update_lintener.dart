@@ -44,12 +44,16 @@ class _State extends State<SliverMultiBoxScrollUpdateListener> with ScrollItemOf
     displayPercent = 0;
 
     _onScrollUpdate = debounce(() {
-      widget.onScrollUpdate(displayPercent);
+      if (widget.onScrollUpdate != null) {
+        widget.onScrollUpdate(displayPercent);
+      }
     }, widget.debounce);
 
     Future.microtask(() {
       refreshDisplayPercent();
-      widget.onScrollInit(displayPercent);
+      if (widget.onScrollInit != null) {
+        widget.onScrollInit(displayPercent);
+      }
     });
 
     sb = ScrollViewListener.of(context).listen((ScrollNotification notification) {

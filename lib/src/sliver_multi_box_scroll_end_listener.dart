@@ -41,7 +41,9 @@ class _State extends State<SliverMultiBoxScrollEndListener> with ScrollItemOffse
 
   StreamSubscription trackSB;
 
-  void Function() _onScrollEnd;
+  Timer Function() _onScrollEnd;
+
+  Timer onScrollEndDebounce;
 
   @override
   void initState() {
@@ -64,6 +66,12 @@ class _State extends State<SliverMultiBoxScrollEndListener> with ScrollItemOffse
     });
 
     trackSB = ScrollViewListener.of(context).listen((ScrollNotification notification) {
+
+      if (notification is ScrollUpdateNotification) {
+        onScrollEndDebounce?.cancel();
+        onScrollEndDebounce = null;
+      }
+
       if (!(notification is ScrollEndNotification)) {
         return;
       }
@@ -71,7 +79,7 @@ class _State extends State<SliverMultiBoxScrollEndListener> with ScrollItemOffse
       if (widget.onScrollEnd != null) {
         calculateDisplayPercent(context, widget.topOverlapCompensation, widget.bottomOverlapCompensation);
         if (paintExtent > 0) {
-          _onScrollEnd();
+          onScrollEndDebounce = _onScrollEnd();
         }
       }
     });

@@ -9,5 +9,7 @@ Function debounce(Function fn, [int t = 30]) {
     _debounce = Timer(Duration(milliseconds: t), () {
       fn();
     });
+
+    return _debounce;
   };
 }
