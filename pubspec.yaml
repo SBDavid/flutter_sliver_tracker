@@ -1,6 +1,6 @@
 name: flutter_sliver_tracker
 description: 滑动曝光埋点框架，支持SliverList、SliverGrid
-version: 1.0.0
+version: 1.0.1
 author: DavidTang <billl89g@gmail.com>
 homepage: https://blog.csdn.net/billll
 environment:
