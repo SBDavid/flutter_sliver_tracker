@@ -10,6 +10,10 @@ mixin ScrollItemOffsetMixin {
 
   void calculateDisplayPercent(BuildContext context, double topOverlapCompensation, double bottomOverlapCompensation) {
 
+    if (context == null) {
+      return;
+    }
+
     // RenderSliverList
     RenderSliverMultiBoxAdaptor renderSliverMultiBoxAdaptor = context.ancestorRenderObjectOfType(TypeMatcher<RenderSliverMultiBoxAdaptor>());
     // ScrollView的起始绘制位置
