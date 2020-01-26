@@ -11,6 +11,7 @@ mixin ScrollItemOffsetMixin {
   void calculateDisplayPercent(BuildContext context, double topOverlapCompensation, double bottomOverlapCompensation) {
 
     if (context == null) {
+      paintExtent = 0;
       return;
     }
 
