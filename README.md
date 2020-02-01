@@ -2,23 +2,52 @@
 
 滑动曝光埋点框架，支持SliverList、SliverGrid
 
+## 什么是滑动曝光埋点
+
+滑动曝光埋点用于滑动列表组件中的模块曝光，例如Flutter中的`SliverList`、`SliverGrid`。
+当`SliverList`中的某一个行（或列）移动到`ViewPort`中，并且显示比例超过一定阈值时，我们把这个事件记为一次滑动曝光事件。
+
+当然我们对滑动曝光有一些额外的要求：
+- 需要滑出一定比例的时候才出发曝光（已实现）
+- 滑动速度快时不触发曝光事件（需要throttle）
+- 滑出视野的模块，再次滑入视野时需要再次上报（已实现）
+- 模块在视野中上下反复移动只触发一次曝光（还未实现）
+
+## 运行Demo
 <img src="https://raw.githubusercontent.com/SBDavid/flutter_sliver_tracker/master/demo.gif" width="270" height="480" alt="图片名称">
 
-## 1. 安装
+- 克隆代码到本地: git clone git@github.com:SBDavid/flutter_sliver_tracker.git
+- 切换工作路径: cd flutter_sliver_tracker/example/
+- 启动模拟器
+- 运行: flutter run
+
+## 内部原理
+
+滑动曝光的核心难点是计算组件的露出比例。也是说我们需要知道`ListView`中的组件的`总高度`、`当前显示高度`。
+这两个高度做除法就可以得出比例。
+
+### 组件总高度
+组件的总高度可以在`renderObject`中获取。我们可以获取`renderObject`下的`size`属性，其中包含了组件的长宽。
+
+### 当前显示高度
+显示高度可以从`SliverGeometry.paintExtent`中获取。
+
+## 使用文档
+### 1. 安装
 
 ```yaml
 dependencies:
   flutter_sliver_tracker: ^1.0.0
 ```
 
-## 2. 引用
+### 2. 引用插件
 ```dart
 import 'package:xm_sliver_listener/flutter_sliver_tracker.dart';
 ```
 
-## 3. 发送滑动埋点事件
+### 3. 发送滑动埋点事件
 
-### 3.1 通过`ScrollViewListener`捕获滚动事件，`ScrollViewListener`必须包裹在`CustomScrollView`之上。
+#### 3.1 通过`ScrollViewListener`捕获滚动事件，`ScrollViewListener`必须包裹在`CustomScrollView`之上。
 
 ```dart
 class _MyHomePageState extends State<MyHomePage> {
@@ -37,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 ```
 
-### 3.2 在`SliverToBoxAdapter`中监听滚动停止事件，并计算显示比例
+#### 3.2 在`SliverToBoxAdapter`中监听滚动停止事件，并计算显示比例
 ```dart
 class _MyHomePageState extends State<MyHomePage> {
   @override
@@ -74,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 ```
 
-### 3.3 在`SliverList`和`SliverGrid`中监听滚动停止事件，并计算显示比例
+#### 3.3 在`SliverList`和`SliverGrid`中监听滚动停止事件，并计算显示比例
 
 - itemLength：列表项布局高度
 - displayedLength：列表项展示高度
@@ -121,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 ```
 
-### 3.4 在`SliverList`和`SliverGrid`中监听滚动更新事件，并计算显示比例
+#### 3.4 在`SliverList`和`SliverGrid`中监听滚动更新事件，并计算显示比例
 ```dart
 class _MyHomePageState extends State<MyHomePage> {
   @override
