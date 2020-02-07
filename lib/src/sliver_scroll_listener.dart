@@ -16,10 +16,21 @@ class SliverEndScrollListener extends StatefulWidget {
       SliverGeometry geometry) onScrollEnd;
 
   final void Function(
+      ScrollUpdateNotification notification,
+      SliverConstraints constraints,
+      SliverGeometry geometry) onScrollUpdate;
+
+  final void Function(
       SliverConstraints constraints,
       SliverGeometry geometry) onScrollInit;
 
-  const SliverEndScrollListener({Key key, this.child, this.onScrollEnd, this.onScrollInit}): super(key: key);
+  const SliverEndScrollListener({
+    Key key,
+    this.child,
+    this.onScrollEnd,
+    this.onScrollUpdate,
+    this.onScrollInit,
+  }): super(key: key);
 
   @override
   _State createState() {
@@ -28,6 +39,8 @@ class SliverEndScrollListener extends StatefulWidget {
 }
 
 class _State extends State<SliverEndScrollListener> {
+
+  void Function(ScrollUpdateNotification notification) _onScrollUpdate;
 
   // listening ScrollNotification
   StreamSubscription trackSB;
@@ -50,16 +63,24 @@ class _State extends State<SliverEndScrollListener> {
 
     trackSB = ScrollViewListener.of(context).listen((ScrollNotification notification) {
 
-      // only take care ScrollEnd
-      if (!(notification is ScrollEndNotification)) {
-        return;
+      // ScrollEnd
+      if (notification is ScrollEndNotification) {
+        if (widget.onScrollEnd != null) {
+          RenderSliver renderSliver = context.ancestorRenderObjectOfType(
+              TypeMatcher<RenderSliver>());
+          widget.onScrollEnd(
+              notification, renderSliver.constraints, renderSliver.geometry);
+        }
       }
 
-      if (widget.onScrollEnd != null) {
-        RenderSliver renderSliver = context.ancestorRenderObjectOfType(
-            TypeMatcher<RenderSliver>());
-        widget.onScrollEnd(
-            notification, renderSliver.constraints, renderSliver.geometry);
+      // ScrollUpdate
+      if (notification is ScrollUpdateNotification) {
+        if (widget.onScrollUpdate != null) {
+          RenderSliver renderSliver = context.ancestorRenderObjectOfType(
+              TypeMatcher<RenderSliver>());
+          widget.onScrollUpdate(
+              notification, renderSliver.constraints, renderSliver.geometry);
+        }
       }
     });
   }

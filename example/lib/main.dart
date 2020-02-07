@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sliver_tracker/flutter_sliver_tracker.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:math';
+
+import 'SliverToBoxAdapterDemo.dart';
+import 'SliverToBoxAdapterDebounceDemo.dart';
+import 'SliverMultiBoxScrollListenerDemo.dart';
+import 'SliverMultiBoxScrollListenerDebounceDemo.dart';
 
 void main() => runApp(MyApp());
 
@@ -10,9 +15,26 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'SliverListenerDemo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+          primarySwatch: Colors.blue,
+          textTheme: TextTheme(
+            button: TextStyle(fontSize: 30),
+            display1: TextStyle(fontSize: 40),
+            display2: TextStyle(fontSize: 40),
+            display3: TextStyle(fontSize: 40),
+            display4: TextStyle(fontSize: 40),
+            headline: TextStyle(fontSize: 40),
+            title: TextStyle(fontSize: 40),
+            subhead: TextStyle(fontSize: 40),
+            body1: TextStyle(fontSize: 20, color: Colors.white),
+          )
       ),
-      home: MyHomePage(title: 'SliverListenerDemo'),
+      home: MyHomePage(title: 'flutter_sliver_tracker demo'),
+      routes: {
+        "SliverToBoxAdapterDemo": (_) => SliverToBoxAdapterDemo(),
+        "SliverToBoxAdapterDebounceDemo": (_) => SliverToBoxAdapterDebounceDemo(),
+        "SliverMultiBoxScrollListenerDemo": (_) => SliverMultiBoxScrollListenerDemo(),
+        "SliverMultiBoxScrollListenerDebounceDemo": (_) => SliverMultiBoxScrollListenerDebounceDemo(),
+      },
     );
   }
 }
@@ -27,6 +49,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  Widget _button(String text, VoidCallback onTap) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Container(
+          color: Colors.amber[500 + 100 * Random().nextInt(4)],
+          height: 50,
+          child: Center(
+            child: Text(text),
+          ),
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,116 +74,52 @@ class _MyHomePageState extends State<MyHomePage> {
         child: CustomScrollView(
           scrollDirection: Axis.vertical,
           slivers: <Widget>[
-            SliverAppBar(
-              title: Text("Listen Scroll End in SliverToBoxAdapter"),
-            ),
-
             SliverToBoxAdapter(
-              child: SliverEndScrollListener(
-                onScrollInit: (SliverConstraints constraints, SliverGeometry geometry) {
-                  // Fluttertoast.showToast(msg: "展示比例：${geometry.paintExtent / geometry.scrollExtent}");
-                },
-                onScrollEnd: (ScrollEndNotification notification,
-                    SliverConstraints constraints,
-                    SliverGeometry geometry) {
-                  // Fluttertoast.showToast(msg: "展示比例：${geometry.paintExtent / geometry.scrollExtent}");
-                },
-                child: Container(
-                  height: 300,
-                  color: Colors.amber,
-                  child: Center(
-                    child: Text("Pull to show paintExtent", style: TextStyle(fontSize: 30, color: Colors.white),),
-                  ),
+              child: Container(
+                color: Colors.blue,
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text("滑动曝光埋点用于滑动列表组件中的模块曝光，例如 Flutter 中的 SliverList、SliverGrid。"
+                    "当 SliverList 中的某一个行（或列）移动到 ViewPort 中，并且显示比例超过一定阈值时，"
+                        "我们把这个事件记为一次滑动曝光事件。"),
+                    Container(height: 50,),
+                    Text("目前 flutter_sliver_tracker 支持 SliverList 以及 SliverGrid。"),
+                    Container(height: 15,),
+                  ],
                 ),
               ),
             ),
-
-            SliverAppBar(
-              title: Text("Listen Scroll End in SliverList"),
-            ),
             SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  return SliverMultiBoxScrollEndListener(
-                    debounce: 1000,
-                    child: Container(
-                      height: 300,
-                      color: Colors.redAccent,
-                      child: Center(
-                        child: Text("SliverList Item", style: TextStyle(fontSize: 30, color: Colors.white))
-                      ),
-                    ),
-                    onScrollInit: (double itemLength, double displayedLength) {
-                      //Fluttertoast.showToast(msg: "显示高度：${displayedLength}");
-                    },
-                    onScrollEnd: (double itemLength, double displayedLength) {
-                      //Fluttertoast.showToast(msg: "显示高度：${displayedLength}");
-                    },
-                  );
-                },
-                childCount: 1
+              delegate: SliverChildListDelegate(
+                [
+                  _button(
+                      'SliverToBoxAdapter Demo',
+                          () {
+                        Navigator.of(context).pushNamed("SliverToBoxAdapterDemo");
+                      }
+                  ),
+                  _button(
+                      'SliverToBoxAdapterDebounce Demo',
+                          () {
+                        Navigator.of(context).pushNamed("SliverToBoxAdapterDebounceDemo");
+                      }
+                  ),
+                  _button(
+                      'SliverMultiBoxScrollListener Demo',
+                          () {
+                        Navigator.of(context).pushNamed("SliverMultiBoxScrollListenerDemo");
+                      }
+                  ),
+                  _button(
+                      'SliverMultiBoxScrollListenerDebounce Demo',
+                          () {
+                        Navigator.of(context).pushNamed("SliverMultiBoxScrollListenerDebounceDemo");
+                      }
+                  ),
+                ],
               ),
-            ),
-            SliverAppBar(
-              title: Text("Listen Scroll End in SliverGrid"),
-            ),
-            SliverGrid(
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200.0,
-                mainAxisSpacing: 10.0,
-                crossAxisSpacing: 10.0,
-                childAspectRatio: 1.0,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                  return SliverMultiBoxScrollEndListener(
-                    child: Container(
-                      alignment: Alignment.center,
-                      color: Colors.teal[100 * (index % 9)],
-                      child: Text('Grid Item $index'),
-                    ),
-                    onScrollInit: (double itemLength, double displayedLength) {
-                      Fluttertoast.showToast(msg: "显示高度：$displayedLength");
-                    },
-                    onScrollEnd: (double itemLength, double displayedLength) {
-                      Fluttertoast.showToast(msg: "显示高度：$displayedLength");
-                    },
-                  );
-                },
-                childCount: 2,
-              ),
-            ),
-            SliverAppBar(
-              title: Text("Listen Scroll Update in SliverList"),
-              pinned: true,
-            ),
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                    return SliverMultiBoxScrollUpdateListener(
-                      onScrollInit: (double percent) {
-                        // percent 列表项显示比例
-                      },
-                      onScrollUpdate: (double percent) {
-                        // percent 列表项显示比例
-                      },
-                      debounce: 1000,
-                      builder: (BuildContext context, double percent) {
-                        return Container(
-                          height: 200,
-                          color: Colors.amber.withAlpha((percent * 255).toInt()),
-                          child: Center(
-                              child: Text("SliverList Item Percent ${percent.toStringAsFixed(2)}", style: TextStyle(fontSize: 30, color: Colors.white))
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  childCount: 6
-              ),
-            ),
-            SliverAppBar(
-              title: Text("End"),
             ),
           ],
         ),
