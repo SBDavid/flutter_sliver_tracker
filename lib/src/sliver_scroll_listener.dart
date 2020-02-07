@@ -7,7 +7,7 @@ import 'package:flutter/rendering.dart';
 /// This Widget will report SliverConstraints and SliverGeometry when ScrollView
 /// dispatch EndScroll events through [onScrollEnd] function.
 /// When the widget is initiated [onScrollInit] will be called.
-class SliverEndScrollListener extends StatefulWidget {
+class SliverScrollListener extends StatefulWidget {
   final Widget child;
 
   final void Function(
@@ -24,7 +24,7 @@ class SliverEndScrollListener extends StatefulWidget {
       SliverConstraints constraints,
       SliverGeometry geometry) onScrollInit;
 
-  const SliverEndScrollListener({
+  const SliverScrollListener({
     Key key,
     this.child,
     this.onScrollEnd,
@@ -38,7 +38,7 @@ class SliverEndScrollListener extends StatefulWidget {
   }
 }
 
-class _State extends State<SliverEndScrollListener> {
+class _State extends State<SliverScrollListener> {
 
   void Function(ScrollUpdateNotification notification) _onScrollUpdate;
 

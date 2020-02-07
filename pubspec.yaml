@@ -1,6 +1,6 @@
 name: flutter_sliver_tracker
 description: flutter_sliver_tracker is a plugin helping to track ScrollUpdate event from sliver children. Sliver children can receive constraints and geometry when position is updated.
-version: 1.0.6
+version: 2.0.0
 author: DavidTang <billl89g@gmail.com>
 homepage: https://github.com/SBDavid/flutter_sliver_tracker
 environment:

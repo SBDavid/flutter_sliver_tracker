@@ -2,24 +2,23 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'scroll_view_listener.dart';
 import 'scroll_item_offset_mixin.dart';
-import '_debounce.dart';
 
-class SliverMultiBoxScrollUpdateListener extends StatefulWidget {
-  final Widget Function(BuildContext context, double displayPercent) builder;
+class SliverMultiBoxScrollListener extends StatefulWidget {
+  final Widget Function(BuildContext context, double itemLength, double displayedLength) builder;
   final Widget child;
-  final void Function(double displayPercent) onScrollUpdate;
-  final void Function(double displayPercent) onScrollInit;
-  final int debounce;
+  final void Function(double itemLength, double displayedLength) onScrollInit;
+  final void Function(ScrollUpdateNotification notification, double itemLength, double displayedLength) onScrollUpdate;
+  final void Function(ScrollEndNotification notification, double itemLength, double displayedLength) onScrollEnd;
   final double topOverlapCompensation;
   final double bottomOverlapCompensation;
 
-  const SliverMultiBoxScrollUpdateListener({
+  const SliverMultiBoxScrollListener({
     Key key,
     this.builder,
     this.child,
     this.onScrollInit,
     this.onScrollUpdate,
-    this.debounce = 0,
+    this.onScrollEnd,
     this.topOverlapCompensation = 0,
     this.bottomOverlapCompensation = 0,
   }):
@@ -32,52 +31,46 @@ class SliverMultiBoxScrollUpdateListener extends StatefulWidget {
   }
 }
 
-class _State extends State<SliverMultiBoxScrollUpdateListener> with ScrollItemOffsetMixin {
+class _State extends State<SliverMultiBoxScrollListener> with ScrollItemOffsetMixin {
 
   StreamSubscription sb;
-  double displayPercent;
-  void Function() _onScrollUpdate;
+  double itemLength;
+  double displayedLength;
+
 
   @override
   void initState() {
     super.initState();
-    displayPercent = 0;
-
-    _onScrollUpdate = debounce(() {
-      if (widget.onScrollUpdate != null) {
-        widget.onScrollUpdate(displayPercent);
-      }
-    }, widget.debounce);
 
     Future.microtask(() {
       refreshDisplayPercent();
       if (widget.onScrollInit != null) {
-        widget.onScrollInit(displayPercent);
+        widget.onScrollInit(displayedLength, itemLength);
       }
     });
 
     sb = ScrollViewListener.of(context).listen((ScrollNotification notification) {
-
-      if (!(notification is ScrollUpdateNotification)) {
-        return;
-      }
-
       refreshDisplayPercent();
-      _onScrollUpdate();
+      if (notification is ScrollUpdateNotification && widget.onScrollUpdate != null)
+        widget.onScrollUpdate(notification, displayedLength, itemLength);
+
+      if (notification is ScrollEndNotification && widget.onScrollEnd != null)
+        widget.onScrollEnd(notification, displayedLength, itemLength);
     });
   }
 
   void refreshDisplayPercent() {
-    double oldDisplayPercent = displayPercent;
+    double oldDisplayedLength = displayedLength;
     calculateDisplayPercent(context, widget.topOverlapCompensation, widget.bottomOverlapCompensation);
 
     if (paintExtent == 0) {
-      displayPercent = 0;
+      displayedLength = null;
     } else {
-      displayPercent = (itemEndOffsetClamp - itemStartOffsetClamp)/(itemEndOffset - itemStartOffset);
+      itemLength = itemEndOffsetClamp - itemStartOffsetClamp;
+      displayedLength = itemEndOffset - itemStartOffset;
     }
 
-    if (oldDisplayPercent != displayPercent && widget.builder != null) {
+    if (oldDisplayedLength != displayedLength && widget.builder != null) {
       setState(() {
 
       });
@@ -86,7 +79,7 @@ class _State extends State<SliverMultiBoxScrollUpdateListener> with ScrollItemOf
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder != null ? widget.builder(context, displayPercent) : widget.child;
+    return widget.builder != null ? widget.builder(context, itemLength, displayedLength) : widget.child;
   }
 
   @override

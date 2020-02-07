@@ -9,9 +9,9 @@
 
 当然我们对滑动曝光有一些额外的要求：
 - 需要滑出一定比例的时候才出发曝光（已实现）
-- 滑动速度快时不触发曝光事件（需要throttle）
+- 滑动速度快时不触发曝光事件（已实现）
 - 滑出视野的模块，再次滑入视野时需要再次上报（已实现）
-- 模块在视野中上下反复移动只触发一次曝光（还未实现）
+- 模块在视野中上下反复移动只触发一次曝光（已实现）
 
 ## 运行Demo
 <img src="https://raw.githubusercontent.com/SBDavid/flutter_sliver_tracker/master/demo.gif" width="270" height="480" alt="图片名称">
