@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'scroll_view_listener.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 
 
 /// This Widget will report SliverConstraints and SliverGeometry when ScrollView
@@ -53,11 +54,15 @@ class _State extends State<SliverScrollListener> {
   void initState() {
     super.initState();
 
-    Future.delayed( Duration(milliseconds: 100),() {
+    SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
+      try {
+        if (widget.onScrollInit != null) {
+          RenderSliver renderSliver = context.ancestorRenderObjectOfType(
+              TypeMatcher<RenderSliver>());
+          widget.onScrollInit(renderSliver.constraints, renderSliver.geometry);
+        }
+      } catch (err) {
 
-      if (widget.onScrollInit != null) {
-        RenderSliver renderSliver = context.ancestorRenderObjectOfType(TypeMatcher<RenderSliver>());
-        widget.onScrollInit(renderSliver.constraints, renderSliver.geometry);
       }
     });
 
