@@ -102,7 +102,7 @@ class _State extends State<SliverScrollListenerDebounce> with ScrollSpeedMixin {
         _onScrollUpdateDebounce();
       }
     } else {
-      if (geometry.paintExtent == 0) {
+      if (geometry.paintExtent.floor() == 0) {
         hasNotified = false;
       }
     }
