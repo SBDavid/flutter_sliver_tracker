@@ -87,8 +87,10 @@ class _State extends State<SliverMultiBoxScrollListener> with ScrollItemOffsetMi
 
     try {
       sb?.cancel();
-    } catch (err) {}
-
-    super.dispose();
+    } catch (err) {
+      rethrow;
+    } finally {
+      super.dispose();
+    }
   }
 }

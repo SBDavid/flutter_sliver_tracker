@@ -93,7 +93,10 @@ class _State extends State<SliverMultiBoxScrollUpdateListener> with ScrollItemOf
   void dispose() {
     try {
       sb?.cancel();
-    } catch (err) {}
-    super.dispose();
+    } catch (err) {
+      rethrow;
+    } finally {
+      super.dispose();
+    }
   }
 }

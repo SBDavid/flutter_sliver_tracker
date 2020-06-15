@@ -94,7 +94,10 @@ class _State extends State<SliverScrollListener> {
   void dispose() {
     try {
       trackSB?.cancel();
-    } catch (err) {}
-    super.dispose();
+    } catch (err) {
+      rethrow;
+    } finally {
+      super.dispose();
+    }
   }
 }

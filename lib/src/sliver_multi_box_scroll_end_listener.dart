@@ -94,8 +94,10 @@ class _State extends State<SliverMultiBoxScrollEndListener> with ScrollItemOffse
   void dispose() {
     try {
       trackSB?.cancel();
-    } catch (err) {}
-
-    super.dispose();
+    } catch (err) {
+      rethrow;
+    } finally {
+      super.dispose();
+    }
   }
 }
