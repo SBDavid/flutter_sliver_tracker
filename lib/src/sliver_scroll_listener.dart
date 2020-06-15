@@ -92,7 +92,9 @@ class _State extends State<SliverScrollListener> {
 
   @override
   void dispose() {
-    trackSB?.cancel();
+    try {
+      trackSB?.cancel();
+    } catch (err) {}
     super.dispose();
   }
 }

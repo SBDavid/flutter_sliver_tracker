@@ -84,7 +84,11 @@ class _State extends State<SliverMultiBoxScrollListener> with ScrollItemOffsetMi
 
   @override
   void dispose() {
-    sb?.cancel();
+
+    try {
+      sb?.cancel();
+    } catch (err) {}
+
     super.dispose();
   }
 }

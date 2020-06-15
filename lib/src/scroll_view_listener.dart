@@ -44,7 +44,9 @@ class ScrollViewListenerState extends State<ScrollViewListener> {
 
   @override
   void dispose() {
-    controller?.close();
+    try {
+      controller?.close();
+    } catch (err) {}
     super.dispose();
   }
 }
