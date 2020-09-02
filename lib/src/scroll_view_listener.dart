@@ -4,8 +4,10 @@ import 'dart:async';
 class ScrollViewListener extends StatefulWidget {
 
   final Widget child;
+  final void Function(ScrollEndNotification) onScrollEnd;
+  final void Function(ScrollUpdateNotification) onScrollUpdate;
 
-  const ScrollViewListener({Key key, this.child}): super(key: key);
+  const ScrollViewListener({Key key, this.child, this.onScrollEnd, this.onScrollUpdate}): super(key: key);
 
   @override
   ScrollViewListenerState createState() {
@@ -33,8 +35,14 @@ class ScrollViewListenerState extends State<ScrollViewListener> {
   Widget build(BuildContext context) {
     return NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification notification) {
-
           controller.sink.add(notification);
+
+          if (notification is ScrollEndNotification && widget.onScrollEnd != null) {
+            this.widget.onScrollEnd(notification);
+          }
+          if (notification is ScrollUpdateNotification && widget.onScrollEnd != null) {
+            this.widget.onScrollUpdate(notification);
+          }
 
           return false;
         },
