@@ -36,15 +36,15 @@ class _State extends State<SliverMultiBoxScrollListenerDebounceDemo> {
                     return SliverMultiBoxScrollListenerDebounce(
                       debounce: 30,
                       maxSpeed: 0.1,
-                      notifyOnce: true,
+                      notifyOnce: false,
                       onScrollInit: (double percent) {
-                        Fluttertoast.showToast(msg: "显示比例：${percent.toStringAsFixed(2)}");
+                        Fluttertoast.showToast(msg: "显示比例：${percent.toStringAsFixed(2)}", fontSize: 16);
                       },
                       onScrollUpdate: (double percent) {
-                        Fluttertoast.showToast(msg: "显示比例：${percent.toStringAsFixed(2)}");
+                        // Fluttertoast.showToast(msg: "显示比例：${percent.toStringAsFixed(2)}", fontSize: 16);
                       },
                       onScrollEnd: (double percent) {
-                        Fluttertoast.showToast(msg: "显示比例：${percent.toStringAsFixed(2)}");
+                        Fluttertoast.showToast(msg: "显示比例：${percent.toStringAsFixed(2)}", fontSize: 16);
                       },
                       builder: (BuildContext context, double itemLength, double displayedLength) {
                         return Container(
@@ -56,17 +56,27 @@ class _State extends State<SliverMultiBoxScrollListenerDebounceDemo> {
                         );
                       },
                     );
-                  } else {
+                  } else if (index == 2) {
                     return Container(
-                        height: 1000,
+                        height: 600,
                         color: Colors.amber,
                         child: Center(
                           child: Text("SliverMultiBoxScrollListener 没有添加埋点", style: TextStyle(fontSize: 30, color: Colors.white),),
                         )
                     );
+                  } else {
+                    return Container(
+                      height: 100,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: <Widget>[
+                          Container(height: 100, width: 600, color: Colors.cyan, child: Center(child: Text("333")),)
+                        ],
+                      ),
+                    );
                   }
                 },
-                childCount: 3
+                childCount: 4
               ),
             )
           ],
