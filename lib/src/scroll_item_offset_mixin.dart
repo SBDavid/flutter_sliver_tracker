@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+// 计算滑动元素的曝光范围
 mixin ScrollItemOffsetMixin {
+  // 滑块起始位置距离视窗起始位置的距离
   double itemStartOffset;
+  // itemStartOffset + 滑块长度
   double itemEndOffset;
+  // 与视窗切割
   double itemStartOffsetClamp;
   double itemEndOffsetClamp;
   double paintExtent;

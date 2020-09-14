@@ -16,7 +16,7 @@ class ScrollViewListener extends StatefulWidget {
   }
 
   static Stream<ScrollNotification> of(BuildContext context) {
-    return (context.ancestorStateOfType(TypeMatcher<ScrollViewListenerState>()) as ScrollViewListenerState).broadCaseStream;
+    return (context.ancestorStateOfType(TypeMatcher<ScrollViewListenerState>()) as ScrollViewListenerState)?.broadCaseStream;
   }
 }
 
@@ -26,15 +26,17 @@ class ScrollViewListenerState extends State<ScrollViewListener> {
   Stream<ScrollNotification> broadCaseStream;
   // 目标ScrollableState
   ScrollableState _scrollableState;
+  // 监听父级滑动事件
+  StreamSubscription sb;
   @override
   void initState() {
     super.initState();
     controller = StreamController<ScrollNotification>();
     broadCaseStream = controller.stream.asBroadcastStream();
 
-    // 确定当前ScrollableState
     WidgetsBinding.instance.addPostFrameCallback((_) {
 
+      // 确定当前ScrollableState
       Element childEle = context;
       while(childEle != null) {
         if (childEle.widget is Scrollable) {
@@ -46,9 +48,18 @@ class ScrollViewListenerState extends State<ScrollViewListener> {
           });
         }
       }
+
+      // 查询并监听父级ScrollViewListener的滚动事件，用于嵌套情形
+      Stream<ScrollNotification> ancestorScrollViewListener = ScrollViewListener.of(context);
+      if (ancestorScrollViewListener != null) {
+        sb = ScrollViewListener.of(context).listen((ScrollNotification notification) {
+          controller.sink.add(notification);
+        });
+      }
     });
   }
 
+  // 确保下发的事件是本ScrollView发生的，而不是自己发生的。
   bool _isCurrentScrollNotification(ScrollNotification notification) {
     return Scrollable.of(notification.context) == _scrollableState;
   }
@@ -79,6 +90,7 @@ class ScrollViewListenerState extends State<ScrollViewListener> {
   void dispose() {
     try {
       controller?.close();
+      sb?.cancel();
     } catch (err) {
       rethrow;
     } finally {

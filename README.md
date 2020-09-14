@@ -1,6 +1,6 @@
 # flutter_sliver_tracker
 
-滑动曝光埋点框架，支持SliverList、SliverGrid
+滑动曝光埋点框架，支持SliverList、SliverGrid，以及嵌套的情况（详见example2/SliverMultiBoxScrollListenerDebounceDemo）
 
 ## 什么是滑动曝光埋点
 
@@ -12,6 +12,12 @@
 - 滑动速度快时不触发曝光事件（已实现）
 - 滑出视野的模块，再次滑入视野时需要再次上报（已实现）
 - 模块在视野中上下反复移动只触发一次曝光（已实现）
+- 嵌套情况：支持滑动组件相互全套（已实现）
+    - SliverMultiBoxScrollListener已支持嵌套
+    - SliverMultiBoxScrollListenerDebounce已支持嵌套
+    - SliverScrollListener不支持，请使用SliverMultiBoxScrollListener
+    - SliverScrollListenerDebounce不支持，请使用SliverMultiBoxScrollListenerDebounce
+    - 所有嵌套情况只测试过两层嵌套，理论上支持更多层。
 
 ## 运行Demo
 <img src="https://raw.githubusercontent.com/SBDavid/flutter_sliver_tracker/master/demo.gif" width="270" height="480" alt="图片名称">

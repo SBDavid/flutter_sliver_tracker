@@ -4,7 +4,7 @@ import 'scroll_view_listener.dart';
 import 'scroll_item_offset_mixin.dart';
 
 class SliverMultiBoxScrollListener extends StatefulWidget {
-  final Widget Function(BuildContext context, double itemLength, double displayedLength) builder;
+  final Widget Function(BuildContext context, double itemLength, double displayedLength, double parentDisplayRate) builder;
   final Widget child;
   final void Function(double itemLength, double displayedLength) onScrollInit;
   final void Function(ScrollUpdateNotification notification, double itemLength, double displayedLength) onScrollUpdate;
@@ -29,6 +29,17 @@ class SliverMultiBoxScrollListener extends StatefulWidget {
   _State createState() {
     return _State();
   }
+
+  // 用于查询父级的曝光情况，用于嵌套
+  static double of(BuildContext context) {
+    _State state = (context.ancestorStateOfType(TypeMatcher<_State>()) as _State);
+    if (state == null) {
+      // 没有检测到嵌套
+      return 1.0;
+    } else {
+      return state.displayedLength / state.itemLength;
+    }
+  }
 }
 
 class _State extends State<SliverMultiBoxScrollListener> with ScrollItemOffsetMixin {
@@ -36,6 +47,7 @@ class _State extends State<SliverMultiBoxScrollListener> with ScrollItemOffsetMi
   StreamSubscription sb;
   double itemLength;
   double displayedLength;
+  double parentDisplayRate;
 
 
   @override
@@ -45,17 +57,22 @@ class _State extends State<SliverMultiBoxScrollListener> with ScrollItemOffsetMi
     Future.microtask(() {
       refreshDisplayPercent();
       if (widget.onScrollInit != null) {
-        widget.onScrollInit(displayedLength, itemLength);
+        widget.onScrollInit(itemLength, displayedLength*SliverMultiBoxScrollListener.of(context));
       }
     });
 
     sb = ScrollViewListener.of(context).listen((ScrollNotification notification) {
       refreshDisplayPercent();
-      if (notification is ScrollUpdateNotification && widget.onScrollUpdate != null)
-        widget.onScrollUpdate(notification, displayedLength, itemLength);
+      parentDisplayRate = SliverMultiBoxScrollListener.of(context);
+      if (notification is ScrollUpdateNotification && widget.onScrollUpdate != null) {
+        print("itemLength: $itemLength displayedLength: $displayedLength parentDisplayRate: $parentDisplayRate");
+        widget.onScrollUpdate(notification, itemLength, displayedLength * parentDisplayRate);
+      }
 
-      if (notification is ScrollEndNotification && widget.onScrollEnd != null)
-        widget.onScrollEnd(notification, displayedLength, itemLength);
+      if (notification is ScrollEndNotification && widget.onScrollEnd != null) {
+        widget.onScrollEnd(
+            notification, itemLength, displayedLength * parentDisplayRate);
+      }
     });
   }
 
@@ -66,20 +83,21 @@ class _State extends State<SliverMultiBoxScrollListener> with ScrollItemOffsetMi
     if (paintExtent == 0) {
       displayedLength = null;
     } else {
-      itemLength = itemEndOffsetClamp - itemStartOffsetClamp;
-      displayedLength = itemEndOffset - itemStartOffset;
+      displayedLength = itemEndOffsetClamp - itemStartOffsetClamp;
+      itemLength = itemEndOffset - itemStartOffset;
     }
 
-    if (oldDisplayedLength != displayedLength && widget.builder != null) {
+    // 有可能降低性能
+    /*if (oldDisplayedLength != displayedLength && widget.builder != null) {
       setState(() {
 
       });
-    }
+    }*/
   }
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder != null ? widget.builder(context, itemLength, displayedLength) : widget.child;
+    return widget.builder != null ? widget.builder(context, itemLength, displayedLength, parentDisplayRate) : widget.child;
   }
 
   @override

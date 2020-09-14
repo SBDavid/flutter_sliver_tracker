@@ -6,7 +6,7 @@ import 'scroll_speed_mixin.dart';
 
 class SliverMultiBoxScrollListenerDebounce extends StatefulWidget {
 
-  final Widget Function(BuildContext context, double itemLength, double displayedLength) builder;
+  final Widget Function(BuildContext context, double itemLength, double displayedLength, double parentDisplayRate) builder;
   final Widget child;
   final void Function(double percent) onScrollInit;
   final void Function(double percent) onScrollUpdate;
