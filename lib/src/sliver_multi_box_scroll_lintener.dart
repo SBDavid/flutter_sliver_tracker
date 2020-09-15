@@ -54,7 +54,7 @@ class _State extends State<SliverMultiBoxScrollListener> with ScrollItemOffsetMi
   void initState() {
     super.initState();
 
-    Future.microtask(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       refreshDisplayPercent();
       if (widget.onScrollInit != null) {
         widget.onScrollInit(itemLength, displayedLength*SliverMultiBoxScrollListener.of(context));
@@ -65,7 +65,6 @@ class _State extends State<SliverMultiBoxScrollListener> with ScrollItemOffsetMi
       refreshDisplayPercent();
       parentDisplayRate = SliverMultiBoxScrollListener.of(context);
       if (notification is ScrollUpdateNotification && widget.onScrollUpdate != null) {
-        print("itemLength: $itemLength displayedLength: $displayedLength parentDisplayRate: $parentDisplayRate");
         widget.onScrollUpdate(notification, itemLength, displayedLength * parentDisplayRate);
       }
 

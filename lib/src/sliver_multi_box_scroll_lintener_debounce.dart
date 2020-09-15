@@ -59,9 +59,11 @@ class _State extends State<SliverMultiBoxScrollListenerDebounce> with ScrollSpee
     super.initState();
 
     _onScrollUpdateDebounce = debounce(() {
-      widget.onScrollUpdate(currentPaintPercent);
-      if (widget.notifyOnce)
-        hasNotified = true;
+      if (currentPaintPercent >= widget.minPaintPercent) {
+        widget.onScrollUpdate(currentPaintPercent);
+        if (widget.notifyOnce)
+          hasNotified = true;
+      }
     }, widget.debounce);
   }
 
