@@ -36,25 +36,30 @@ class ScrollViewListenerState extends State<ScrollViewListener> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
 
-      // 确定当前ScrollableState
-      Element childEle = context;
-      while(childEle != null) {
-        if (childEle.widget is Scrollable) {
-          _scrollableState = (childEle as StatefulElement).state;
-          break;
-        } else {
-          childEle.visitChildElements((Element element) {
-            childEle = element;
+      if (mounted) { // 当元素处于PageView中时，可能执行initState但是实际不发生渲染，并且context为null
+        // 确定当前ScrollableState
+        Element childEle = context;
+        while (childEle != null) {
+          if (childEle.widget is Scrollable) {
+            _scrollableState = (childEle as StatefulElement).state;
+            break;
+          } else {
+            childEle.visitChildElements((Element element) {
+              childEle = element;
+            });
+          }
+        }
+
+        // 查询并监听父级ScrollViewListener的滚动事件，用于嵌套情形
+        Stream<
+            ScrollNotification> ancestorScrollViewListener = ScrollViewListener
+            .of(context);
+        if (ancestorScrollViewListener != null) {
+          sb = ScrollViewListener.of(context).listen((
+              ScrollNotification notification) {
+            controller.sink.add(notification);
           });
         }
-      }
-
-      // 查询并监听父级ScrollViewListener的滚动事件，用于嵌套情形
-      Stream<ScrollNotification> ancestorScrollViewListener = ScrollViewListener.of(context);
-      if (ancestorScrollViewListener != null) {
-        sb = ScrollViewListener.of(context).listen((ScrollNotification notification) {
-          controller.sink.add(notification);
-        });
       }
     });
   }

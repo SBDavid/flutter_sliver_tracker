@@ -55,9 +55,12 @@ class _State extends State<SliverMultiBoxScrollListener> with ScrollItemOffsetMi
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      refreshDisplayPercent();
-      if (widget.onScrollInit != null) {
-        widget.onScrollInit(itemLength, displayedLength*SliverMultiBoxScrollListener.of(context));
+      if (mounted) { // 当元素处于PageView中时，可能执行initState但是实际不发生渲染，并且context为null
+        refreshDisplayPercent();
+        if (widget.onScrollInit != null) {
+          widget.onScrollInit(itemLength,
+              displayedLength * SliverMultiBoxScrollListener.of(context));
+        }
       }
     });
 
