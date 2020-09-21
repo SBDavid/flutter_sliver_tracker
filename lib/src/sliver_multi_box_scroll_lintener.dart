@@ -46,7 +46,7 @@ class _State extends State<SliverMultiBoxScrollListener> with ScrollItemOffsetMi
 
   StreamSubscription sb;
   double itemLength;
-  double displayedLength;
+  double displayedLength = 0;
   double parentDisplayRate;
 
 
@@ -83,7 +83,7 @@ class _State extends State<SliverMultiBoxScrollListener> with ScrollItemOffsetMi
     calculateDisplayPercent(context, widget.topOverlapCompensation, widget.bottomOverlapCompensation);
 
     if (paintExtent == 0) {
-      displayedLength = null;
+      displayedLength = 0;
     } else {
       displayedLength = itemEndOffsetClamp - itemStartOffsetClamp;
       itemLength = itemEndOffset - itemStartOffset;

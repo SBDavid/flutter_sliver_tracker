@@ -15,3 +15,4 @@
 ## [3.0.1] - bugfix: 查询父节点曝光情况
 ## [3.0.2] - bugfix: debounce中判断显示比例
 ## [3.0.3] - bugfix: 当元素处于PageView中时，可能执行initState但是实际不发生渲染，并且context为null
+## [3.0.4] - bugfix: displayedLength默认值为0
