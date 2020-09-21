@@ -81,6 +81,11 @@ class _State extends State<SliverMultiBoxScrollListenerDebounce> with ScrollSpee
   }
 
   void _onScrollInit(double itemLength, double displayedLength) {
+
+    if (itemLength == null) {
+      return;
+    }
+
     // 更新展示比例
     currentPaintPercent = displayedLength / itemLength;
     if (currentPaintPercent >= widget.minPaintPercent
@@ -92,6 +97,10 @@ class _State extends State<SliverMultiBoxScrollListenerDebounce> with ScrollSpee
   }
 
   void _onScrollUpdate(ScrollUpdateNotification notification ,double itemLength, double displayedLength) {
+
+    if (itemLength == null) {
+      return;
+    }
 
     // 更新速度
     scrollSpeedEndUpdate(notification);
