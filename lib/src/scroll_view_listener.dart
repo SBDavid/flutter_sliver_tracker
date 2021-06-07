@@ -16,7 +16,7 @@ class ScrollViewListener extends StatefulWidget {
   }
 
   static Stream<ScrollNotification> of(BuildContext context) {
-    return (context.ancestorStateOfType(TypeMatcher<ScrollViewListenerState>()) as ScrollViewListenerState)?.broadCaseStream;
+    return (context.findAncestorStateOfType<ScrollViewListenerState>())?.broadCaseStream;
   }
 }
 

@@ -32,7 +32,7 @@ class SliverMultiBoxScrollListener extends StatefulWidget {
 
   // 用于查询父级的曝光情况，用于嵌套
   static double of(BuildContext context) {
-    _State state = (context.ancestorStateOfType(TypeMatcher<_State>()) as _State);
+    _State state = (context.findAncestorStateOfType<_State>() as _State);
     if (state == null) {
       // 没有检测到嵌套
       return 1.0;

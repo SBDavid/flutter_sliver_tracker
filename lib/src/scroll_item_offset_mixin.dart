@@ -20,7 +20,7 @@ mixin ScrollItemOffsetMixin {
     }
 
     // RenderSliverList
-    RenderSliverMultiBoxAdaptor renderSliverMultiBoxAdaptor = context.ancestorRenderObjectOfType(TypeMatcher<RenderSliverMultiBoxAdaptor>());
+    RenderSliverMultiBoxAdaptor renderSliverMultiBoxAdaptor = context.findAncestorRenderObjectOfType();
     // ScrollView的起始绘制位置
     double startOffset = renderSliverMultiBoxAdaptor.constraints.scrollOffset;
     // ScrollView的结束绘制位置
