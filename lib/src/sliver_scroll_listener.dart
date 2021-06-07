@@ -57,8 +57,7 @@ class _State extends State<SliverScrollListener> {
     SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
       try {
         if (widget.onScrollInit != null) {
-          RenderSliver renderSliver = context.ancestorRenderObjectOfType(
-              TypeMatcher<RenderSliver>());
+          RenderSliver renderSliver = context.findAncestorRenderObjectOfType();
           widget.onScrollInit(renderSliver.constraints, renderSliver.geometry);
         }
       } catch (err) {
@@ -71,8 +70,7 @@ class _State extends State<SliverScrollListener> {
       // ScrollEnd
       if (notification is ScrollEndNotification) {
         if (widget.onScrollEnd != null) {
-          RenderSliver renderSliver = context.ancestorRenderObjectOfType(
-              TypeMatcher<RenderSliver>());
+          RenderSliver renderSliver = context.findAncestorRenderObjectOfType();
           widget.onScrollEnd(
               notification, renderSliver.constraints, renderSliver.geometry);
         }
@@ -81,8 +79,7 @@ class _State extends State<SliverScrollListener> {
       // ScrollUpdate
       if (notification is ScrollUpdateNotification) {
         if (widget.onScrollUpdate != null) {
-          RenderSliver renderSliver = context.ancestorRenderObjectOfType(
-              TypeMatcher<RenderSliver>());
+          RenderSliver renderSliver = context.findAncestorRenderObjectOfType();
           widget.onScrollUpdate(
               notification, renderSliver.constraints, renderSliver.geometry);
         }
